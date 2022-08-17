@@ -44,7 +44,7 @@ def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, b
     )
 
     for i in range(x):
-        #try:
+        try:
             img_name_wo_ext, ext = os.path.splitext(img_name)
             augmented_img_name = f"{img_name_wo_ext}_{i}{ext}"
 
@@ -55,7 +55,7 @@ def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, b
 
             target_labels[augmented_img_name] = {"polygons": np.array(t_bboxes).reshape(-1, 2, 2)}
             cv2.imwrite(os.path.join(out_dir, augmented_img_name), img_copy)
-        #except: pass
+        except: pass
 
 
 
