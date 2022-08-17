@@ -5,3 +5,5 @@ doctr*
 actual_data*
 models/*
 data/*
+data
+tmp.py

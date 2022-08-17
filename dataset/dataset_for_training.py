@@ -3,9 +3,11 @@ import random
 import os
 import zipfile
 from copy import deepcopy
+from tqdm.auto import tqdm
 
 import cv2
 import numpy as np
+import albumentations as A
 
 import wget as wget
 
@@ -27,6 +29,28 @@ def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, 
         img_copy = binarizer.binarize(img_copy)
         target_labels[binarized_img_name] = {"polygons": bboxes}
         cv2.imwrite(os.path.join(out_dir, binarized_img_name), img_copy)
+
+
+def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list, x=4) -> None:
+    transform = A.Compose([
+        A.Flip(p=0.6),
+        # A.RandomCrop(width=450, height=450),
+        A.ColorJitter(p=1, brightness=0.25, contrast=0.4, saturation=0.4, hue=0.4),
+        # A.BBoxSafeRandomCrop(p=0.5),
+        A.GaussNoise(p=1, var_limit=(50, 250.0))
+    ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['class_labels'])
+    )
+
+    for i in range(x):
+        img_name_wo_ext, ext = os.path.splitext(img_name)
+        augmented_img_name = f"{img_name_wo_ext}_{i}{ext}"
+
+        img_copy = deepcopy(img)
+        transformed = transform(image=img_copy, bboxes=np.array(bboxes).reshape(-1, 4), class_labels=['t']*len(bboxes))
+        img_copy = transformed["image"]
+        t_bboxes = transformed["bboxes"]
+        target_labels[augmented_img_name] = {"polygons": t_bboxes}
+        cv2.imwrite(os.path.join(out_dir, augmented_img_name), img_copy)
 
 
 def main(args) -> None:
@@ -99,12 +123,13 @@ def main(args) -> None:
     random.shuffle(images_file_names)
     images_dict = {train_dir_name: images_file_names[:int(0.9 * len(images_file_names))],
                    val_dir_name: images_file_names[int(0.9 * len(images_file_names)):]}
-    # Dataset size: train 537, val 60
+
     print(f"Dataset size: train {len(images_dict[train_dir_name])}, val {len(images_dict[val_dir_name])}")
 
     for stage in images_dict:
         target_labels = {}
-        for file_name in images_dict[stage]:
+        print('Processing', stage, '...')
+        for file_name in tqdm(images_dict[stage]):
             json_file_name = f"{file_name}.json"
             if not os.path.isfile(os.path.join(target_dir, json_file_name)):
                 continue
@@ -116,11 +141,12 @@ def main(args) -> None:
                        [int(w * (item["x"] + item["width"])), int(h * (item["y"] + item["height"]))]]
                       for item in labels["entities"]]
             target_labels[file_name] = {"polygons": bboxes}
-
             os.rename(os.path.join(target_dir, file_name),
                       os.path.join(target_dir, stage, images_dir_name, file_name))
-            if args.augment:
-                binarize(img, file_name, os.path.join(target_dir, stage, images_dir_name), target_labels, bboxes)
+            if args.augment and stage != 'val':
+
+                # binarize(img, file_name, os.path.join(target_dir, stage, images_dir_name), target_labels, bboxes)
+                augment(img, file_name, os.path.join(target_dir, stage, images_dir_name), target_labels, bboxes)
 
         with open(os.path.join(target_dir, stage, "labels.json"), "w") as f:
             json.dump(target_labels, f)
