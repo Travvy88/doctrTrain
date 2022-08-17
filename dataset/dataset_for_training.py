@@ -22,13 +22,15 @@ def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, 
                       Binarizer(block_size=45, delta=50),
                       Binarizer(block_size=15, delta=40)]
     for i, binarizer in enumerate(binarizer_list):
-        img_name_wo_ext, ext = os.path.splitext(img_name)
+        try:
+            img_name_wo_ext, ext = os.path.splitext(img_name)
 
-        binarized_img_name = f"{img_name_wo_ext}_{i}{ext}"
-        img_copy = deepcopy(img)
-        img_copy = binarizer.binarize(img_copy)
-        target_labels[binarized_img_name] = {"polygons": bboxes}
-        cv2.imwrite(os.path.join(out_dir, binarized_img_name), img_copy)
+            binarized_img_name = f"{img_name_wo_ext}_{i}{ext}"
+            img_copy = deepcopy(img)
+            img_copy = binarizer.binarize(img_copy)
+            target_labels[binarized_img_name] = {"polygons": bboxes}
+            cv2.imwrite(os.path.join(out_dir, binarized_img_name), img_copy)
+        except: pass
 
 
 def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list, x=4) -> None:
