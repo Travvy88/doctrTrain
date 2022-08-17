@@ -24,7 +24,6 @@ def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, 
     for i, binarizer in enumerate(binarizer_list):
         try:
             img_name_wo_ext, ext = os.path.splitext(img_name)
-
             binarized_img_name = f"{img_name_wo_ext}_{i}{ext}"
             img_copy = deepcopy(img)
             img_copy = binarizer.binarize(img_copy)
@@ -33,9 +32,9 @@ def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, 
         except: pass
 
 
-def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list, x=4) -> None:
+def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list, x=3) -> None:
     transform = A.Compose([
-        A.Flip(p=0.6),
+        # A.Flip(p=0.6),
         # A.RandomCrop(width=450, height=450),
         A.ColorJitter(p=1, brightness=0.25, contrast=0.4, saturation=0.4, hue=0.4),
         # A.BBoxSafeRandomCrop(p=0.5),
