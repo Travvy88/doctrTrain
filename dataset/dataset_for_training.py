@@ -53,7 +53,7 @@ def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, b
             img_copy = transformed["image"]
             t_bboxes = transformed["bboxes"]
 
-            target_labels[augmented_img_name] = {"polygons": np.array(t_bboxes).reshape(-1, 2, 2)}
+            target_labels[augmented_img_name] = {"polygons": np.array(t_bboxes).reshape(-1, 2, 2).tolist()}
             cv2.imwrite(os.path.join(out_dir, augmented_img_name), img_copy)
         except: pass
 
