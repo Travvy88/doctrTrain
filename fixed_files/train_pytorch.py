@@ -289,7 +289,7 @@ def main(args):
     # Backbone freezing
     if args.freeze_backbone:
         for p in model.feat_extractor.parameters():
-                p.param.requires_grad = False
+            p.requires_grad = False
 
 
     # Optimizer
