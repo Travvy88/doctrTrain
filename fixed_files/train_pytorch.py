@@ -289,7 +289,9 @@ def main(args):
     # Backbone freezing
     if args.freeze_backbone:
         for p in model.feat_extractor.parameters():
-            p.reguires_grad_(False)
+            try:
+                p.reguires_grad_(False)
+            except: pass
 
     # Optimizer
     optimizer = torch.optim.Adam([p for p in model.parameters() if p.requires_grad], args.lr,
