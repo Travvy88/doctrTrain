@@ -35,10 +35,11 @@ def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, 
 def augment(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list, x=3) -> None:
     transform = A.Compose([
         # A.Flip(p=0.6),
-        # A.RandomCrop(width=450, height=450),
-        A.ColorJitter(p=1, brightness=0.25, contrast=0.4, saturation=0.4, hue=0.4),
+        A.RandomCrop(width=450, height=450, p=0.7),
+        A.PixelDropout(p=0.7)
+        # A.ColorJitter(p=1, brightness=0.25, contrast=0.4, saturation=0.4, hue=0.4),
         # A.BBoxSafeRandomCrop(p=0.5),
-        A.GaussNoise(p=1, var_limit=(50, 250.0))
+        # A.GaussNoise(p=1, var_limit=(50, 250.0))
     ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['class_labels'])
     )
 
