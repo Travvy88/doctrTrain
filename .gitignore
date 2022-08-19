@@ -1,9 +1,10 @@
 *.DS_Store
 .idea*
 venv*
-doctr*
+doctr/*
 actual_data*
 models/*
 data/*
 data
 tmp.py
+mmdetection

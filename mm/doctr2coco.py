@@ -44,9 +44,10 @@ def doctr2coco(path):
 def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description='doctr format to coco')
-    parser.add_argument('path', type=str, help='path to text_detection/train(or val) folder')
+    parser.add_argument('p', type=str, help='path to text_detection/train(or val) folder')
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
     args = parse_args()
-    doctr2coco(args.path)
+    doctr2coco(args.p)
