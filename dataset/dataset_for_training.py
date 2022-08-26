@@ -129,8 +129,8 @@ def main(args) -> None:
     images_file_names = [file_name for file_name in os.listdir(target_dir)
                          if file_name[0].isdigit() and not file_name.endswith("json")]
     random.shuffle(images_file_names)
-    images_dict = {train_dir_name: images_file_names[:int(0.9 * len(images_file_names))],
-                   val_dir_name: images_file_names[int(0.9 * len(images_file_names)):]}
+    images_dict = {train_dir_name: images_file_names[:int(0.8 * len(images_file_names))],
+                   val_dir_name: images_file_names[int(0.8 * len(images_file_names)):]}
 
     print(f"Dataset size: train {len(images_dict[train_dir_name])}, val {len(images_dict[val_dir_name])}")
 
