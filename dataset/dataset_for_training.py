@@ -13,6 +13,8 @@ import wget as wget
 
 from adaptive_docreader_binarizer import Binarizer
 
+random.seed(88)
+np.random.seed(88)
 
 def binarize(img: np.ndarray, img_name: str, out_dir: str, target_labels: dict, bboxes: list) -> None:
     # block_size=40 delta=40
